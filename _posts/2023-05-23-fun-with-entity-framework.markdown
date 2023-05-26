@@ -38,7 +38,7 @@ This created a relationship table like this:
 
 Now perhaps this could have been all fine and good.  The problem was I wanted to use Dtos and refactor into multiple files.  There were the regular controllers and the API controllers with a lot of overlapping code, so I created the business layer, and I decided to break up the business layer into different files for different objects (1 for Job Listings and one for Languages).  The LanguageDto didn't have the list of associated JobListings.  This was all working fine for display purposes, but when I tried creating/editing, I got this error: 
 
-## <font color="red">Cannot insert explicit value for identity column in table 'Languages' when IDENTITY_INSERT is set to OFF.</font>
+### <font color="red">Cannot insert explicit value for identity column in table 'Languages' when IDENTITY_INSERT is set to OFF.</font>
 
 I searched around on the internet for a long, long time and tried all sorts of things (thank you, git, for letting me undo), but finally I came on an answer in StackOverflow that told me, roughly (sadly I visited so many StackOverflow pages today I can't find the exact quote):
 
@@ -78,3 +78,33 @@ Therefore, I have decided to stick with the clunky code I have for the time bein
             _context.JobListings.Add(jobListing);
             _context.SaveChanges();
 ```
+
+## Update
+
+I have come up with a better solution.  Instead of going to the database twice, I am passing the SelectedLanguageIds (changed from SelectedLanguageNames) to the business logic layer (as an optional argument so that it does not have to be used this way, in case we are coming from the API instead).  It looks more like this:
+
+```c#
+            //Controller - now we don't have the previous controller code at all, 
+            //we just pass the SelectedLanguageIds to the business logic layer as an additional parameter
+            if (jobListingForm.JobListing.Id == 0)
+                bll.CreateJobListing(jobListingForm.JobListing, jobListingForm.SelectedLanguageIds);
+            else
+            {
+                if (!bll.UpdateJobListing(jobListingForm.JobListing.Id, jobListingForm.JobListing, jobListingForm.SelectedLanguageIds))
+                    return new HttpNotFoundResult();
+            }
+
+
+
+            //Business Logic - this is from the edit method, 
+            //but the create method is very similar
+            if (selectedLanguageIds != null)
+            {
+                jobListingInDb.Languages.Clear();
+                var langs = _context.Languages.
+                    Where(l => selectedLanguageIds.Contains(l.Id)).ToList();
+                jobListingInDb.Languages.AddRange(langs);
+            }
+```
+
+I am happy with this solution.  It's more elegant without causing the API to change.  Hopefully you learned something from my journey through this problem.  I certainly did.  Maybe it even helped you with something that's been troubling you.
