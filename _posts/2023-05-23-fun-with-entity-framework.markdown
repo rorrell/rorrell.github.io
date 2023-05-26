@@ -6,7 +6,7 @@ categories: tutorial
 ---
 ![image tooltip here](/assets/maria-teneva-7FmSYQ3Z7fg-unsplash.jpg)
 
-So I've been working with Entity Framework.  I did a tutorial and followed along and then started my own project.  All was going fine until I...  tried to save child objects to a many to many relationship!  Here are my objects:
+So I've been working with Entity Framework.  This pertains to the [this project](https://github.com/rorrell/CodeHire).  I did a tutorial and followed along and then started my own project.  All was going fine until I...  tried to save child objects to a many to many relationship!  Here are my objects:
 
 ```c#
 public class JobListing
