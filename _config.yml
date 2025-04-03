@@ -31,7 +31,7 @@ linkedin_username: rachel-orrell
 show_excerpts: false
 
 # Build settings
-remote_theme: jekyll-theme-chirpy
+theme: cayman
 plugins:
   - jekyll-feed
 
