@@ -31,7 +31,7 @@ linkedin_username: rachel-orrell
 show_excerpts: false
 
 # Build settings
-theme: minima
+remote_theme: jekyll-theme-chirpy
 plugins:
   - jekyll-feed
 
